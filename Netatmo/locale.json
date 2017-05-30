@@ -1,13 +1,14 @@
 {
 	"translations": {
-		"de": { 
-            "DeviceType": "Kameratyp"
+    "de": {
+      "Device": "Gerät",
+      "Devicetype": "Kameratyp"
 
 
- 
-	
-			
-			
-		}
+
+
+
+
+    }
 	}
 }

@@ -1,7 +1,7 @@
 <?
 // Modul fu"r Netatmo Welcome, später auch weitere
 
-class Netatmo extends IPSModule
+class NetatmoSecurity extends IPSModule
 {
 		
     public function Create()
@@ -12,7 +12,7 @@ class Netatmo extends IPSModule
 		//These lines are parsed on Symcon Startup or Instance creation
         //You cannot use variables here. Just static values.
 		
-        //$this->RegisterPropertyString("Devicetype", "");
+        $this->RegisterPropertyString("Devicetype", "");
 	}
 	
     public function ApplyChanges()
@@ -56,8 +56,6 @@ class Netatmo extends IPSModule
 	
 	private function ValidateConfiguration()
 	{
-		return;
-		/*
 		$change = false;
 				
 		$devicetype = $this->ReadPropertyString('Devicetype');
@@ -68,7 +66,7 @@ class Netatmo extends IPSModule
 		}
         //$this->EnableAction("EchoTuneInRemote_".$devicenumber);
         //$this->SetStatus(102);
-		*/
+		
 	}
 
 	 public function MeineErsteEigeneFunktion() {

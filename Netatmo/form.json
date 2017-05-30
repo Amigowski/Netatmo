@@ -1,7 +1,7 @@
 {
     "elements":
             [
-				{ "type": "Label", "label": "Devicetype" },
+				{ "type": "Label", "label": "Device" },
                 {"type": "Select", "name": "Devicetype", "caption": "Devicetype",
                  "options": [
                     { "label": "NetatmoWelcome", "value": "Welcome" },

@@ -57,6 +57,7 @@ class Netatmo extends IPSModule
 	private function ValidateConfiguration()
 	{
 		return;
+		/*
 		$change = false;
 				
 		$devicetype = $this->ReadPropertyString('Devicetype');
@@ -67,6 +68,7 @@ class Netatmo extends IPSModule
 		}
         //$this->EnableAction("EchoTuneInRemote_".$devicenumber);
         //$this->SetStatus(102);
+		*/
 	}
 } 
 ?>

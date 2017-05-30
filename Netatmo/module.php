@@ -85,6 +85,7 @@ class NetatmoSecurity extends IPSModule
 	}
 
 	 /************************** Schnittstelle Netatmo *******************************/
+	/*
 	public function getAccessToken () 
 	{
     $app_id = '592d2d6c6b0affb65e8b741f';
@@ -125,5 +126,6 @@ class NetatmoSecurity extends IPSModule
     echo("It worked. Hello <".$user->body->mail.">\n");
 
     }
+	*/
 } 
 ?>

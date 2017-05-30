@@ -70,17 +70,17 @@ class NetatmoSecurity extends IPSModule
 		}
 		else if ($user == "")
 		{
-			$this->SetStatus(202); // Devicetype darf nicht leer sein
+			$this->SetStatus(202); // User darf nicht leer sein
 		}
 		else if ($password == "")
 		{
-			$this->SetStatus(203); // Devicetype darf nicht leer sein
+			$this->SetStatus(203); // ^password darf nicht leer sein
 		}
 
 
 
         //$this->EnableAction("EchoTuneInRemote_".$devicenumber);
-        //$this->SetStatus(102);
+        else $this->SetStatus(102); // OK
 		
 	}
 

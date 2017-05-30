@@ -1,7 +1,7 @@
 <?
 // Modul fu"r Netatmo Welcome, später auch weitere
 
-class Netatmo extends IPSModule
+class NetatmoSecurity extends IPSModule
 {
 		
     public function Create()

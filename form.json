@@ -11,8 +11,7 @@
             ],
 	"actions":
 			[
-				{ "type": "Label", "label": "Start Play:" },
-				{ "type": "Button", "label": "Play", "onClick": "EchoRemote_Play($id);" }
+			
 			],		
     "status":
             [

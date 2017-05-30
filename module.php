@@ -12,7 +12,7 @@ class Netatmo extends IPSModule
 		//These lines are parsed on Symcon Startup or Instance creation
         //You cannot use variables here. Just static values.
 		
-        $this->RegisterPropertyString("Devicetype", "");
+        //$this->RegisterPropertyString("Devicetype", "");
 	}
 	
     public function ApplyChanges()
@@ -58,9 +58,10 @@ class Netatmo extends IPSModule
 	
 	private function ValidateConfiguration()
 	{
+        return;
 		$change = false;
 				
-		$devicetype = $this->ReadPropertyString('Devicetype');
+		//$devicetype = $this->ReadPropertyString('Devicetype');
 		
 		if ($devicetype == "")
 		{

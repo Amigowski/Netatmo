@@ -1,14 +1,40 @@
 {
-    "elements":
-            [
-				{ "type": "Label", "label": "Device" },
-                {"type": "Select", "name": "Devicetype", "caption": "Devicetype",
-                 "options": [
-                    { "label": "NetatmoWelcome", "value": "Welcome" },
-                    { "label": "NetatmoPresence", "value": "Presence" }
-                    ]
-                }
-            ],
+  "elements": [
+    {
+      "type": "Label",
+      "label": "Device"
+    },
+    {
+      "type": "Select",
+      "name": "Devicetype",
+      "caption": "Devicetype",
+      "options": [
+        {
+          "label": "NetatmoWelcome",
+          "value": "Welcome"
+        },
+        {
+          "label": "NetatmoPresence",
+          "value": "Presence"
+        }
+      ]
+    },
+
+    {
+      "type": "Label",
+      "label": "Logindata"
+    },
+    {
+      "type": "ValidationTextBox",
+      "name": "User"
+    },
+    {
+      "type": "ValidationTextBox",
+      "name": "Password"
+    }
+
+
+  ],
 	"actions":
 			[
 			 
@@ -31,19 +57,19 @@
                     "caption": "interface closed."
                 },
                 {
-                    "code": 202,
+                    "code": 201,
                     "icon": "error",
-                    "caption": "Echo IP adress must not empty."
+                    "caption": "Please set devicetype"
                 },
 				{
-                    "code": 203,
+                    "code": 202,
                     "icon": "error",
-                    "caption": "No valid IP adress."
+                    "caption": "Please enter your username from Netatmo"
                 },
                 {
-                    "code": 204,
+                    "code": 203,
                     "icon": "error",
-                    "caption": "connection to the Echo lost."
+                    "caption": "Please enter your password from Netatmo"
                 },
 				{
                     "code": 205,

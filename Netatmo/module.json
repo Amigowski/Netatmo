@@ -1,10 +1,10 @@
 {
     "id": "{3B05B13C-A7A7-47EA-A622-4924BE73FAA1}",
-	"title": "Netatmo",
-	"description": "Netatmo Steuerung", 
+    "title": "Netatmo",
+    "description": "Netatmo Steuerung", 
     "type": 3,
     "vendor": "Netatmo",
-  "aliases": [ "Netatmo Welcome", "Netatmo Presence" ],
+    "aliases": [ "Netatmo Welcome", "Netatmo Presence" ],
     "parentRequirements": [],
     "childRequirements": [],
     "implemented": [],

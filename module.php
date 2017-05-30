@@ -53,8 +53,6 @@ class Netatmo extends IPSModule
         *
         *
         */
-	protected $lockgetConfig = false;	
-
 	
 	private function ValidateConfiguration()
 	{
@@ -72,10 +70,6 @@ class Netatmo extends IPSModule
 		}
 	}
 
-    public function Netatmo_TestConnect($id) {
-        echo $id;
-        return $id;
-    }
+   
 }
-
 ?>

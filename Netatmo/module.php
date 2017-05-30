@@ -48,8 +48,8 @@ class Netatmo extends IPSModule
     }
 
 		/**
-        * Die folgenden Funktionen stehen automatisch zur Verfügung, wenn das Modul über die "Module Control" eingefügt wurden.
-        * Die Funktionen werden, mit dem selbst eingerichteten Prefix, in PHP und JSON-RPC wiefolgt zur Verfügung gestellt:
+        * Die folgenden Funktionen stehen automatisch zur Verfuegung, wenn das Modul ueber die "Module Control" eingefuegt wurden.
+        * Die Funktionen werden, mit dem selbst eingerichteten Prefix, in PHP und JSON-RPC wiefolgt zur Verfuegung gestellt:
         *
         *
         */
@@ -70,5 +70,9 @@ class Netatmo extends IPSModule
         //$this->SetStatus(102);
 		*/
 	}
+
+	 public function MeineErsteEigeneFunktion() {
+            echo $this->InstanceID;
+        }
 } 
 ?>

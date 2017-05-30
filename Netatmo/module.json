@@ -2,9 +2,12 @@
   "id": "{1201D637-940F-4A31-BEDF-1C2432A3891C}",
   "type": 3,
   "vendor": "Netatmo",
-  "aliases": [ "Netatmo Welcome" ],
+  "aliases": [
+    "Netatmo Welcome" ,
+    "Netatmo Presence"
+  ],
   "parentRequirements": [],
   "childRequirements": [],
   "implemented": [],
-  "prefix": "Netatmo"
+  "prefix": "Netatmo_"
 }

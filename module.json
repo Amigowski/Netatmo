@@ -5,9 +5,9 @@
     "name": "Netatmo",
     "type": 3,
     "vendor": "Netatmo",
-    "aliases": ["Netatmo Welcome", "Netatmo Presence"],
+    "aliases": ["Netatmo Welcome"],
     "parentRequirements": [],
     "childRequirements": [],
     "implemented": [],
-    "prefix": "Netatmo_"
+    "prefix": "Netatmo"
 }

@@ -43,7 +43,7 @@ class Netatmo extends IPSModule
 		
 		*/
 		
-		$this->ValidateConfiguration();	
+		//$this->ValidateConfiguration();	
 	
     }
 

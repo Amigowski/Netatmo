@@ -102,7 +102,7 @@ class NetatmoSecurity extends IPSModule
 	{
 
 		$clientId = $this->ReadPropertyString('ClientId');
-		$clientSecret = $this->ReadPropertyString('ClientSecret');
+		$clientSecret = $this->ReadPropertyString('ClientId');
 		$username = $this->ReadPropertyString('Username');
 		$password = $this->ReadPropertyString('Password');
 		$scope = 'read_camera'; // write_camera access_camera'; // all scopes are selected.
@@ -133,7 +133,7 @@ class NetatmoSecurity extends IPSModule
 		$response = file_get_contents($token_url, false, $context);
 
 		var_dump($response);
-		
+
 		$params = null;
 		$params = json_decode($response, true);
 		return $params['access_token'];

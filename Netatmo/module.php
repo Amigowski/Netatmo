@@ -17,7 +17,7 @@ class NetatmoSecurity extends IPSModule
         $this->RegisterPropertyString("Devicetype", "");
 		$this->RegisterPropertyString("ClientId", "");
 		$this->RegisterPropertyString("ClientSecret", "");
-		$this->RegisterPropertyString("User", "");
+		$this->RegisterPropertyString("Username", "");
 		$this->RegisterPropertyString("Password", "");
 	}
 	

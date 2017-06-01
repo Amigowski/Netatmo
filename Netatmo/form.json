@@ -25,6 +25,14 @@
       "label": "Logindata"
     },
     {
+      "type": "ClientId",
+      "name": "User"
+    },
+    {
+      "type": "ClientSecret",
+      "name": "User"
+    },
+    {
       "type": "ValidationTextBox",
       "name": "User"
     },
@@ -49,7 +57,7 @@
 				{
                     "code": 102,
                     "icon": "active",
-                    "caption": "Instanz configured"
+                    "caption": "Instanz aktiv"
                 },
                 {
                     "code": 104,
@@ -74,12 +82,12 @@
 				{
                     "code": 205,
                     "icon": "error",
-                    "caption": "field must not be empty."
+                    "caption": "Please enter your ClientId"
                 },
 				{
                     "code": 206,
                     "icon": "error",
-                    "caption": "select category for import."
+                    "caption": "Please enter your ClientSecret"
                 }
             ]
 }

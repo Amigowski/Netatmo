@@ -3,7 +3,9 @@
 
 class NetatmoSecurity extends IPSModule
 {
-		
+	private $VID_AccessToken ='';
+	private $VID_Usermail ='';
+
     public function Create()
     {
 		//Never delete this line!
@@ -46,24 +48,19 @@ class NetatmoSecurity extends IPSModule
 		$this->EnableAction("EchoVolume");
 		
 		*/
-		
+		$this->VID_AccessToken = $this->RegisterVariableString("AccessToken", "Token");
+		$this->VID_Usermail = $this->RegisterVariableString("Usermail", "Mail");
 		$this->ValidateConfiguration();	
 	
     }
 
-		/**
-        * Die folgenden Funktionen stehen automatisch zur Verfuegung, wenn das Modul ueber die "Module Control" eingefuegt wurden.
-        * Die Funktionen werden, mit dem selbst eingerichteten Prefix, in PHP und JSON-RPC wiefolgt zur Verfuegung gestellt:
-        *
-        *
-        */
 	
 	private function ValidateConfiguration()
 	{
 		$change = false;
 				
 		$devicetype = $this->ReadPropertyString('Devicetype');
-		$user = $this->ReadPropertyString('User');
+		$username = $this->ReadPropertyString('Username');
 		$password = $this->ReadPropertyString('Password');
 		$clientId = $this->ReadPropertyString('ClientId');
 		$clientSecret = $this->ReadPropertyString('ClientSecret');
@@ -71,10 +68,13 @@ class NetatmoSecurity extends IPSModule
 		if ($devicetype == "")
 		{
 			$this->SetStatus(201); // Devicetype darf nicht leer sein
-		}
-		else if ($user == "")
+		}else if ($devicetype == "Presence")
 		{
-			$this->SetStatus(202); // User darf nicht leer sein
+			$this->SetStatus(206); // Gerät noch nicht unterstützt
+		}
+		else if ($username == "")
+		{
+			$this->SetStatus(202); // username darf nicht leer sein
 		}
 		else if ($password == "")
 		{
@@ -89,52 +89,55 @@ class NetatmoSecurity extends IPSModule
 
 
         //$this->EnableAction("EchoTuneInRemote_".$devicenumber);
-        else $this->SetStatus(102); // OK
+        else {
+			SetValueString($this->VID_AccessToken, getAccessToken());
+			$this->SetStatus(102); // OK
+		}
 		
 	}
 
 	 /************************** Schnittstelle Netatmo *******************************/
-	/*
+
 	public function getAccessToken () 
 	{
-    $app_id = '592d2d6c6b0affb65e8b741f';
-    $app_secret = 'lf2bKTh1WpeUkgJe4offqCbHtKzQ48TYG41pYy5ISIlA';
-    $username = 'YOUR_USERNAME';
-    $password = 'YOUR_PASSWORD';
-    $scope = 'read_station read_thermostat write_thermostat'; // all scopes are selected.
-    $token_url = "https://api.netatmo.com/oauth2/token";
-    $postdata = http_build_query(
-        array(
-            'grant_type' => "password",
-            'client_id' => $app_id,
-            'client_secret' => $app_secret,
-            'username' => $username,
-            'password' => $password,
-            'scope' => $scope
-        )
-    );
+		$clientId = $this->ReadPropertyString('ClientId');
+		$clientSecret = $this->ReadPropertyString('ClientSecret');
+		$username = $this->ReadPropertyString('Username');
+		$password = $this->ReadPropertyString('Password');
+		$scope = 'read_camera write_camera access_camera'; // all scopes are selected.
+		$token_url = "https://api.netatmo.com/oauth2/token";
+		$postdata = http_build_query(
+			array(
+				'grant_type' => "password",
+				'client_id' => $clientId,
+				'client_secret' => $clientSecret,
+				'username' => $username,
+				'password' => $password,
+				'scope' => $scope
+			)
+		);
 
-    $opts = array('http' =>
-    array(
-        'method'  => 'POST',
-        'header'  => 'Content-type: application/x-www-form-urlencoded',
-        'content' => $postdata
-    )
-    );
+		$opts = array('http' =>
+		array(
+			'method'  => 'POST',
+			'header'  => 'Content-type: application/x-www-form-urlencoded',
+			'content' => $postdata
+		)
+		);
 
-    $context  = stream_context_create($opts);
+		$context  = stream_context_create($opts);
 
-    $response = file_get_contents($token_url, false, $context);
-    $params = null;
-    $params = json_decode($response, true);
+		$response = file_get_contents($token_url, false, $context);
+		$params = null;
+		$params = json_decode($response, true);
 
-    $api_url = "https://api.netatmo.com/api/getuser?access_token="
-    . $params['access_token'];
+		$api_url = "https://api.netatmo.com/api/getuser?access_token=".$params['access_token'];
 
-    $user = json_decode(file_get_contents($api_url);
-    echo("It worked. Hello <".$user->body->mail.">\n");
+		$user = json_decode(file_get_contents($api_url);
+		SetValueString($this->VID_Usermail, $user->body->mail);
+		echo("It worked. Hello <".$user->body->mail.">\n");
 
     }
-	*/
+	
 } 
 ?>

@@ -36,7 +36,7 @@
     },
     {
       "type": "ValidationTextBox",
-      "name": "User",
+      "name": "Username",
       "caption" : "Username"
     },
     {
@@ -58,7 +58,7 @@
                     "icon": "inactive",
                     "caption": "Creating instance."
                 },
-				{
+				        {
                     "code": 102,
                     "icon": "active",
                     "caption": "Instanz aktiv"
@@ -73,7 +73,7 @@
                     "icon": "error",
                     "caption": "Please set devicetype"
                 },
-				{
+				        {
                     "code": 202,
                     "icon": "error",
                     "caption": "Please enter your username from Netatmo"
@@ -83,15 +83,21 @@
                     "icon": "error",
                     "caption": "Please enter your password from Netatmo"
                 },
-				{
-                    "code": 205,
+				        {
+                    "code": 204,
                     "icon": "error",
                     "caption": "Please enter your ClientId"
                 },
-				{
-                    "code": 206,
+				        {
+                    "code": 205,
                     "icon": "error",
                     "caption": "Please enter your ClientSecret"
+                },
+                {
+                    "code": 206,
+                    "icon": "error",
+                    "caption": "Not yet implemented, still in development or planed for future"
                 }
+
             ]
 }

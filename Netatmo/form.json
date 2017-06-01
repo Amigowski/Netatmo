@@ -25,12 +25,13 @@
       "label": "Logindata"
     },
     {
-      "type": "ClientId",
-      "name": "User"
+      "type": "ValidationTextBox",
+      "name": "ClientId",
+      "caption" :"ClientId"
     },
     {
-      "type": "ClientSecret",
-      "name": "User"
+      "type": "ValidationTextBox",
+      "name": "ClientSecret"
     },
     {
       "type": "ValidationTextBox",

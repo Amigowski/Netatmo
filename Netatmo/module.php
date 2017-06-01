@@ -117,6 +117,8 @@ class NetatmoSecurity extends IPSModule
 			)
 		);
 
+			var_dump($postdata);
+
 		$opts = array('http' =>
 		array(
 			'method'  => 'POST',

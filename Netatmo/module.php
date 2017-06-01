@@ -90,7 +90,7 @@ class NetatmoSecurity extends IPSModule
 
         //$this->EnableAction("EchoTuneInRemote_".$devicenumber);
         else {
-			SetValueString($this->VID_AccessToken, getAccessToken());
+			SetValueString($this->VID_AccessToken, $this->getAccessToken());
 			$this->SetStatus(102); // OK
 		}
 		

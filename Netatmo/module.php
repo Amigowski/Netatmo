@@ -104,7 +104,7 @@ class NetatmoSecurity extends IPSModule
 		$clientSecret = $this->ReadPropertyString('ClientSecret');
 		$username = $this->ReadPropertyString('Username');
 		$password = $this->ReadPropertyString('Password');
-		$scope = 'read_camera write_camera access_camera'; // all scopes are selected.
+		$scope = 'read_camera'; // write_camera access_camera'; // all scopes are selected.
 		$token_url = "https://api.netatmo.com/oauth2/token";
 		$postdata = http_build_query(
 			array(

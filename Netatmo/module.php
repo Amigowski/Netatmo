@@ -13,6 +13,8 @@ class NetatmoSecurity extends IPSModule
         //You cannot use variables here. Just static values.
 		
         $this->RegisterPropertyString("Devicetype", "");
+		$this->RegisterPropertyString("ClientId", "");
+		$this->RegisterPropertyString("ClientSecret", "");
 		$this->RegisterPropertyString("User", "");
 		$this->RegisterPropertyString("Password", "");
 	}
@@ -45,7 +47,7 @@ class NetatmoSecurity extends IPSModule
 		
 		*/
 		
-		//$this->ValidateConfiguration();	
+		$this->ValidateConfiguration();	
 	
     }
 
@@ -63,6 +65,8 @@ class NetatmoSecurity extends IPSModule
 		$devicetype = $this->ReadPropertyString('Devicetype');
 		$user = $this->ReadPropertyString('User');
 		$password = $this->ReadPropertyString('Password');
+		$clientId = $this->ReadPropertyString('ClientId');
+		$clientSecret = $this->ReadPropertyString('ClientSecret');
 		
 		if ($devicetype == "")
 		{
@@ -76,7 +80,12 @@ class NetatmoSecurity extends IPSModule
 		{
 			$this->SetStatus(203); // ^password darf nicht leer sein
 		}
-
+		else if ($clientId == "") {
+			$this->SetStatus(204);
+		}
+		else if ($clientSecret == "") {
+			$this->SetStatus(205);
+		}
 
 
         //$this->EnableAction("EchoTuneInRemote_".$devicenumber);

@@ -27,19 +27,22 @@
     {
       "type": "ValidationTextBox",
       "name": "ClientId",
-      "caption" :"ClientId"
+      "caption" : "Client Id"
     },
     {
       "type": "ValidationTextBox",
-      "name": "ClientSecret"
+      "name": "ClientSecret",
+      "caption" : "Client Secret"
     },
     {
       "type": "ValidationTextBox",
-      "name": "User"
+      "name": "User",
+      "caption" : "Username"
     },
     {
       "type": "ValidationTextBox",
-      "name": "Password"
+      "name": "Password",
+      "caption" : "Password"
     }
 
 

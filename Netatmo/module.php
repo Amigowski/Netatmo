@@ -133,9 +133,9 @@ class NetatmoSecurity extends IPSModule
 
 		$api_url = "https://api.netatmo.com/api/getuser?access_token=".$params['access_token'];
 
-		$user = json_decode(file_get_contents($api_url);
-		SetValueString($this->VID_Usermail, $user->body->mail);
-		echo("It worked. Hello <".$user->body->mail.">\n");
+		// $user = json_decode(file_get_contents($api_url);
+		// SetValueString($this->VID_Usermail, $user->body->mail);
+		// echo("It worked. Hello <".$user->body->mail.">\n");
 
     }
 	

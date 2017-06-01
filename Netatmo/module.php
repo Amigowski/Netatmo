@@ -100,6 +100,7 @@ class NetatmoSecurity extends IPSModule
 
 	public function getAccessToken () 
 	{
+
 		$clientId = $this->ReadPropertyString('ClientId');
 		$clientSecret = $this->ReadPropertyString('ClientSecret');
 		$username = $this->ReadPropertyString('Username');
@@ -117,7 +118,7 @@ class NetatmoSecurity extends IPSModule
 			)
 		);
 
-			var_dump($postdata);
+		
 
 		$opts = array('http' =>
 		array(
@@ -130,14 +131,18 @@ class NetatmoSecurity extends IPSModule
 		$context  = stream_context_create($opts);
 
 		$response = file_get_contents($token_url, false, $context);
+
+		var_dump($response);
+		
 		$params = null;
 		$params = json_decode($response, true);
+		return $params['access_token'];
 
-		$api_url = "https://api.netatmo.com/api/getuser?access_token=".$params['access_token'];
+		// $api_url = "https://api.netatmo.com/api/getuser?access_token=".$params['access_token'];
 
-		$user = json_decode(file_get_contents($api_url));
-		SetValueString($this->VID_Usermail, $user->body->mail);
-		echo("It worked. Hello <".$user->body->mail.">\n");
+		// $user = json_decode(file_get_contents($api_url));
+		// SetValueString($this->VID_Usermail, $user->body->mail);
+		// echo("It worked. Hello <".$user->body->mail.">\n");
 
     }
 	

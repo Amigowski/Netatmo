@@ -106,7 +106,7 @@ IPS_LogMessage("WebHook RAW", file_get_contents("php://input"));
 
         else {
 			if ($this->getAccessToken())
-				IPS_LogMessage($logSource, "Connected");
+				IPS_LogMessage($^this->logSource, "Connected");
 				$this->SetStatus(102); // OK
 		}
 		

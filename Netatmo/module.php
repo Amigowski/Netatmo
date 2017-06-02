@@ -316,7 +316,7 @@ IPS_LogMessage("Netatmo WebHook RAW", file_get_contents("php://input"));
     //WEBHOOK:
     public function setWebhook()
     {
-		$endpoint = $this->ReadPropertyString("Url").'hook/Netatmo'.$this->InstanceID;
+		$endpoint = $this->ReadPropertyString("Url").'/hook/Netatmo'.$this->InstanceID;
         $api_url = $this->_apiurl.'/api/addwebhook?access_token=' . $this->Token() . '&url='.$endpoint.'&app_type=app_security';
         $requete = @file_get_contents($api_url);
         $jsonDatas = json_decode($requete,true);

@@ -320,7 +320,12 @@ IPS_LogMessage("Netatmo WebHook RAW", file_get_contents("php://input"));
         $api_url = $this->_apiurl.'/api/addwebhook?access_token=' . $this->Token() . '&url='.$endpoint.'&app_type=app_security';
         $requete = @file_get_contents($api_url);
         $jsonDatas = json_decode($requete,true);
-        return $jsonDatas;
+        if ($jsonDatas['status']== 'ok') {
+			IPS_LogMessage($this->logSource, "Webhook successfull");
+			return true;			
+		}
+		IPS_LogMessage($this->logSource, "Webhook status:".$jsonDatas['status']);
+		return false;
     }
     public function dropWebhook()
     {

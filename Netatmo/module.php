@@ -5,9 +5,7 @@ class NetatmoSecurity extends IPSModule
 {
 	private $VID_AccessToken ='';
 	private $VID_RefreshToken ='';
-	private $VID_Scope ='';
 	private $VID_Expires ='';
-	private $VID_Expire ='';
 	private $VID_Usermail ='';
 	
     public function Create()
@@ -32,9 +30,9 @@ class NetatmoSecurity extends IPSModule
 		$this->VID_AccessToken = $this->RegisterVariableString("AccessToken", "AccessToken");
 		$this->VID_Usermail = $this->RegisterVariableString("Usermail", "Mail");
 		$this->VID_RefreshToken = $this->RegisterVariableString("RefreshToken", "RefreshToken");
-		//$this->VID_Scope = $this->RegisterVariableString("Scope", "Scope");
+		
 		$this->VID_Expires = $this->RegisterVariableString("Expires", "Expires");
-		$this->VID_Expire = $this->RegisterVariableString("Expire", "Expire");
+		
 	
 		$this->ValidateConfiguration();	
 	
@@ -127,10 +125,15 @@ class NetatmoSecurity extends IPSModule
         {
 			SetValueString($this->VID_AccessToken,$jsonDatas['access_token']);
 			SetValueString($this->VID_RefreshToken,$jsonDatas['refresh_token']);
-			//SetValueString($this->VID_Scope,$jsonDatas['scope']);
-			SetValueString($this->VID_Expires,$jsonDatas['expires_in']);
-			SetValueString($this->VID_Expire,$jsonDatas['expire_in']);
+			$expiresIn = new DateTime();
+			$expiresIn->add(new DateInterval($jsonDatas['expires_in'].'S'));
+			SetValueString($this->VID_Expires,$expiresIn->format('Y-m-d H:i:s'));
+		
 
+			$api_url = "https://api.netatmo.com/api/getuser?access_token=".$jsonDatas['access_token'];
+
+    		$user = json_decode(file_get_contents($api_url);
+    		SetValueString($this->VID_Usermail, $user->body->mail);
             return true;
         }
         else

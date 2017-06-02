@@ -5,7 +5,7 @@ class NetatmoSecurity extends IPSModule
 {
 	private $VID_AccessToken ='';
 	private $VID_Usermail ='';
-
+	
     public function Create()
     {
 		//Never delete this line!
@@ -90,8 +90,9 @@ class NetatmoSecurity extends IPSModule
 
         //$this->EnableAction("EchoTuneInRemote_".$devicenumber);
         else {
-			SetValueString($this->VID_AccessToken, $this->getAccessToken());
-			$this->SetStatus(102); // OK
+			//SetValueString($this->VID_AccessToken, $this->getAccessToken());
+			if (connect())
+				$this->SetStatus(102); // OK
 		}
 		
 	}
@@ -102,10 +103,12 @@ class NetatmoSecurity extends IPSModule
 	{
 
 		$clientId = $this->ReadPropertyString('ClientId');
-		$clientSecret = $this->ReadPropertyString('ClientId');
+		$clientSecret = $this->ReadPropertyString('ClientSecret');
 		$username = $this->ReadPropertyString('Username');
 		$password = $this->ReadPropertyString('Password');
 		$scope = 'read_camera'; // write_camera access_camera'; // all scopes are selected.
+
+
 		$token_url = "https://api.netatmo.com/oauth2/token";
 		$postdata = http_build_query(
 			array(
@@ -118,7 +121,7 @@ class NetatmoSecurity extends IPSModule
 			)
 		);
 
-		
+		var_dump($postdata);
 
 		$opts = array('http' =>
 		array(
@@ -136,14 +139,70 @@ class NetatmoSecurity extends IPSModule
 
 		$params = null;
 		$params = json_decode($response, true);
-		return $params['access_token'];
+		
 
-		// $api_url = "https://api.netatmo.com/api/getuser?access_token=".$params['access_token'];
+		$api_url = "https://api.netatmo.com/api/getuser?access_token=".$params['access_token'];
 
-		// $user = json_decode(file_get_contents($api_url));
-		// SetValueString($this->VID_Usermail, $user->body->mail);
-		// echo("It worked. Hello <".$user->body->mail.">\n");
+		$user = json_decode(file_get_contents($api_url));
+		SetValueString($this->VID_Usermail, $user->body->mail);
+		echo("It worked. Hello <".$user->body->mail.">\n");
 
+    }
+
+	    public function connect()
+    {
+
+
+		$clientId = $this->ReadPropertyString('ClientId');
+		$clientSecret = $this->ReadPropertyString('ClientSecret');
+		$username = $this->ReadPropertyString('Username');
+		$password = $this->ReadPropertyString('Password');
+		
+        $token_url = "https://api.netatmo.com/oauth2/token";
+
+        $postdata = http_build_query(
+                                    array(
+                                        'grant_type' => 'password',
+                                        'client_id' => $clientId,
+                                        'client_secret' => $clientSecret,
+                                        'username' => $username,
+                                        'password' => $password,
+                                        'scope' => 'read_station read_thermostat write_thermostat read_camera write_camera access_camera read_presence access_presence write_presence read_homecoach'
+                )
+            );
+        $opts = array('http' =>
+                            array(
+                                'method'  => 'POST',
+                                'header'  => 'Content-type: application/x-www-form-urlencoded;charset=UTF-8'."\r\n".
+                                            'User-Agent: netatmoclient',
+                                'content' => $postdata
+                )
+            );
+        $context  = stream_context_create($opts);
+        $response = @file_get_contents($token_url, false, $context);
+        //netatmo server sometimes give 500, always works second time:
+        if ($response === false) {
+            $response = @file_get_contents($token_url, false, $context);
+            if ($response === false) {
+                echo "Can't connect to Netatmo Server.";
+                return false;
+            }
+        }
+        $jsonDatas = json_decode($response, true);
+        if (isset($jsonDatas['access_token']))
+        {
+			SetValueString($this->VID_Accesstoken,$jsonDatas['access_token']);
+            //$this->_accesstoken = $jsonDatas['access_token'];
+            //$this->_refreshtoken = $jsonDatas['refresh_token'];
+            //$this->_scope = $jsonDatas['scope'];
+            return true;
+        }
+        else
+        {
+            echo "Can't get Netatmo token.";
+            return false;
+        }
+        return true;
     }
 	
 } 

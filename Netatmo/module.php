@@ -126,7 +126,7 @@ class NetatmoSecurity extends IPSModule
 			SetValueString($this->VID_AccessToken,$jsonDatas['access_token']);
 			SetValueString($this->VID_RefreshToken,$jsonDatas['refresh_token']);
 			$expiresIn = new DateTime();
-			$expiresIn->add(new DateInterval($jsonDatas['expires_in'].'S'));
+			$expiresIn->add(new DateInterval('P'.$jsonDatas['expires_in'].'S'));
 			SetValueString($this->VID_Expires,$expiresIn->format('Y-m-d H:i:s'));
 		
 

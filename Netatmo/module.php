@@ -32,7 +32,7 @@ class NetatmoSecurity extends IPSModule
 		$this->VID_AccessToken = $this->RegisterVariableString("AccessToken", "AccessToken");
 		$this->VID_Usermail = $this->RegisterVariableString("Usermail", "Mail");
 		$this->VID_RefreshToken = $this->RegisterVariableString("RefreshToken", "RefreshToken");
-		$this->VID_Scope = $this->RegisterVariableString("Scope", "Scope");
+		//$this->VID_Scope = $this->RegisterVariableString("Scope", "Scope");
 		$this->VID_Expires = $this->RegisterVariableString("Expires", "Expires");
 		$this->VID_Expire = $this->RegisterVariableString("Expire", "Expire");
 	
@@ -127,7 +127,7 @@ class NetatmoSecurity extends IPSModule
         {
 			SetValueString($this->VID_AccessToken,$jsonDatas['access_token']);
 			SetValueString($this->VID_RefreshToken,$jsonDatas['refresh_token']);
-			SetValueString($this->VID_Scope,$jsonDatas['scope']);
+			//SetValueString($this->VID_Scope,$jsonDatas['scope']);
 			SetValueString($this->VID_Expires,$jsonDatas['expires_in']);
 			SetValueString($this->VID_Expire,$jsonDatas['expire_in']);
 

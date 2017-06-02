@@ -64,7 +64,7 @@ IPS_LogMessage("WebHook RAW", file_get_contents("php://input"));
 
         $scriptId = $this->RegisterScript("WebHookNetatmo", "WebHookNetatmo", $content,0);
         //PS_SetHidden($scriptId, true);
-        if (IPS_GetKernelRunlevel() == KR_READY)
+        if (IPS_GetKernelRunlevel() == 10103)
             $this->RegisterHook('/hook/Netatmo'.$this->InstanceID, $scriptId);
 	
 		$this->ValidateConfiguration();	

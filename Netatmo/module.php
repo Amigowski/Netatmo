@@ -321,7 +321,7 @@ IPS_LogMessage("Netatmo WebHook RAW", file_get_contents("php://input"));
         $requete = @file_get_contents($api_url);
         $jsonDatas = json_decode($requete,true);
         if ($jsonDatas['status']== 'ok') {
-			IPS_LogMessage($this->logSource, "Webhook successfull");
+			IPS_LogMessage($this->logSource, "Webhook successfull ".$endpoint);
 			return true;			
 		}
 		IPS_LogMessage($this->logSource, "Webhook status:".$jsonDatas['status']);

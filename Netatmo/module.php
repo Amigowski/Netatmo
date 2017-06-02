@@ -36,6 +36,7 @@ class NetatmoSecurity extends IPSModule
 		$this->RegisterPropertyString("ClientSecret", "");
 		$this->RegisterPropertyString("Username", "");
 		$this->RegisterPropertyString("Password", "");
+		$this->RegisterPropertyString("Url", "");
 	}
 	
     public function ApplyChanges()
@@ -53,10 +54,10 @@ class NetatmoSecurity extends IPSModule
 		$content = '<?
 
 
-IPS_LogMessage("WebHook GET", print_r($_GET, true));
-IPS_LogMessage("WebHook POST", print_r($_POST, true));
-IPS_LogMessage("WebHook IPS", print_r($_IPS, true));
-IPS_LogMessage("WebHook RAW", file_get_contents("php://input"));
+IPS_LogMessage("Netatmo WebHook GET", print_r($_GET, true));
+IPS_LogMessage("Netatmo WebHook POST", print_r($_POST, true));
+IPS_LogMessage("Netatmo WebHook IPS", print_r($_IPS, true));
+IPS_LogMessage("Netatmo WebHook RAW", file_get_contents("php://input"));
 
 
 
@@ -65,9 +66,12 @@ IPS_LogMessage("WebHook RAW", file_get_contents("php://input"));
         $scriptId = $this->RegisterScript("WebHookNetatmo", "WebHookNetatmo", $content,0);
         //PS_SetHidden($scriptId, true);
         if (IPS_GetKernelRunlevel() == 10103)
-            $this->RegisterHook('/hook/Netatmo'.$this->InstanceID, $scriptId);
+		{
+		    $this->RegisterHook('/hook/Netatmo'.$this->InstanceID, $scriptId);
 	
-		$this->ValidateConfiguration();	
+			$this->setWebhook();
+			$this->ValidateConfiguration();	
+		}
 	
     }
 
@@ -81,6 +85,7 @@ IPS_LogMessage("WebHook RAW", file_get_contents("php://input"));
 		$password = $this->ReadPropertyString('Password');
 		$clientId = $this->ReadPropertyString('ClientId');
 		$clientSecret = $this->ReadPropertyString('ClientSecret');
+		$url = $this->ReadPropertyString("Url");
 		
 		if ($devicetype == "")
 		{
@@ -106,10 +111,18 @@ IPS_LogMessage("WebHook RAW", file_get_contents("php://input"));
 
         else {
 			if ($this->getAccessToken())
-				IPS_LogMessage($^this->logSource, "Connected");
+				IPS_LogMessage($this->logSource, "Connected");
+				$this->RegisterHook()
 				$this->SetStatus(102); // OK
 		}
 		
+	}
+
+	private function Token() {
+		if ($this->getAccessToken()) {
+			return GetValueString($this->VID_AccessToken);
+		}
+		return "";
 	}
 
 	 /************************** Schnittstelle Netatmo *******************************/
@@ -300,16 +313,17 @@ IPS_LogMessage("WebHook RAW", file_get_contents("php://input"));
         return $camArray;
     }
     //WEBHOOK:
-    public function setWebhook($endpoint)
+    public function setWebhook()
     {
-        $api_url = $this->_apiurl.'/api/addwebhook?access_token=' . $this->_accesstoken . '&url='.$endpoint.'&app_type=app_security';
+		$endpoint = ReadPropertyString("Url").'hook/Netatmo'.$this->InstanceID;
+        $api_url = $this->_apiurl.'/api/addwebhook?access_token=' . $this->Token() . '&url='.$endpoint.'&app_type=app_security';
         $requete = @file_get_contents($api_url);
         $jsonDatas = json_decode($requete,true);
         return $jsonDatas;
     }
     public function dropWebhook()
     {
-        $api_url = $this->_apiurl.'/api/dropwebhook?access_token=' . $this->_accesstoken .'&app_type=app_security';
+        $api_url = $this->_apiurl.'/api/dropwebhook?access_token=' . $this->Token() .'&app_type=app_security';
         $requete = @file_get_contents($api_url);
         $jsonDatas = json_decode($requete,true);
         return $jsonDatas;

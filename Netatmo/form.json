@@ -43,13 +43,26 @@
       "type": "ValidationTextBox",
       "name": "Password",
       "caption" : "Password"
-    }
+    },
 
+    {
+      "type": "Label",
+      "label": "Extern"
+    },
+    {
+      "type": "ValidationTextBox",
+      "name": "Url",
+      "caption" : "Url"
+    }
 
   ],
 	"actions":
 			[
-			 
+			 {
+                    "type": "Button",
+                    "label": "GetPersonss",
+                    "onClick": "getPersonsAtHome();"
+      }
 			],		
     "status":
             [

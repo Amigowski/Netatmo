@@ -122,7 +122,7 @@ IPS_LogMessage("WebHook RAW", file_get_contents("php://input"));
 	{
 		if (GetValueString($this->VID_AccessToken)) {
 				// Token haben wir schon ist es auch gültig
-			$expiresIn = DateTime::createFromFormat('Y-m-d H:i:s', GetValueString($1this->VID_ExpireIn));
+			$expiresIn = DateTime::createFromFormat('Y-m-d H:i:s', GetValueString($this->VID_ExpireIn));
 			if (new DateTime() > $expiresIn) {
 				return $this->refreshToken();
 			}else{

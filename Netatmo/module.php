@@ -191,7 +191,7 @@ class NetatmoSecurity extends IPSModule
         $jsonDatas = json_decode($response, true);
         if (isset($jsonDatas['access_token']))
         {
-			SetValueString($this->VID_Accesstoken,$jsonDatas['access_token']);
+			SetValueString($this->VID_AccessToken,$jsonDatas['access_token']);
             //$this->_accesstoken = $jsonDatas['access_token'];
             //$this->_refreshtoken = $jsonDatas['refresh_token'];
             //$this->_scope = $jsonDatas['scope'];

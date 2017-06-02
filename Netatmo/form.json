@@ -97,6 +97,16 @@
                     "code": 206,
                     "icon": "error",
                     "caption": "Not yet implemented, still in development or planed for future"
+                },
+                {
+                    "code": 207,
+                    "icon": "error",
+                    "caption": "Can't connect to Netatmo"
+                },
+                  {
+                    "code": 208,
+                    "icon": "error",
+                    "caption": "Can't get access"
                 }
 
             ]

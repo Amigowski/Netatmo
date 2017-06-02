@@ -4,11 +4,14 @@
 class NetatmoSecurity extends IPSModule
 {
 	private $VID_AccessToken ='';
+	private $VID_RefreshToken ='';
+	private $VID_Scope ='';
+	private $VID_Expires ='';
+	private $VID_Expire ='';
 	private $VID_Usermail ='';
 	
     public function Create()
     {
-		//Never delete this line!
         parent::Create();
 		
 		//These lines are parsed on Symcon Startup or Instance creation
@@ -23,33 +26,16 @@ class NetatmoSecurity extends IPSModule
 	
     public function ApplyChanges()
     {
-		//Never delete this line!
-        parent::ApplyChanges();
-		/*
-		$echoremoteass =  Array(
-					Array(1, "Rewind 30s",  "HollowDoubleArrowLeft", -1),
-					Array(2, "Previous",  "HollowLargeArrowLeft", -1),
-					Array(3, "Pause/Stop",  "Sleep", -1),
-					Array(4, "Play",  "Script", -1),
-					Array(5, "Next",  "HollowLargeArrowRight", -1),
-					Array(6, "Forward 30s",  "HollowDoubleArrowRight", -1)
-				);
-						
-		$this->RegisterProfileIntegerAss("Echo.Remote", "Move", "", "", 1, 6, 0, 0, $echoremoteass);
-		$this->RegisterVariableInteger("EchoRemote", "Echo Remote", "Echo.Remote", 1);
-		$this->EnableAction("EchoRemote");
-		$this->RegisterVariableBoolean("EchoShuffle", "Echo Shuffle", "~Switch", 2);
-		IPS_SetIcon($this->GetIDForIdent("EchoShuffle"), "Shuffle");
-		$this->EnableAction("EchoShuffle");
-		$this->RegisterVariableBoolean("EchoRepeat", "Echo Repeat", "~Switch", 3);
-		IPS_SetIcon($this->GetIDForIdent("EchoRepeat"), "Repeat");
-		$this->EnableAction("EchoRepeat");
-		$this->RegisterVariableFloat("EchoVolume", "Volume", "~Intensity.1", 4);
-		$this->EnableAction("EchoVolume");
 		
-		*/
-		$this->VID_AccessToken = $this->RegisterVariableString("AccessToken", "Token");
+        parent::ApplyChanges();
+	
+		$this->VID_AccessToken = $this->RegisterVariableString("AccessToken", "AccessToken");
 		$this->VID_Usermail = $this->RegisterVariableString("Usermail", "Mail");
+		$this->VID_RefreshToken = $this->RegisterVariableString("RefreshToken", "RefreshToken");
+		$this->VID_Scope = $this->RegisterVariableString("Scope", "Scope");
+		$this->VID_Expires = $this->RegisterVariableString("Expires", "Expires");
+		$this->VID_Expire = $this->RegisterVariableString("Expire", "Expire");
+	
 		$this->ValidateConfiguration();	
 	
     }
@@ -88,10 +74,9 @@ class NetatmoSecurity extends IPSModule
 		}
 
 
-        //$this->EnableAction("EchoTuneInRemote_".$devicenumber);
+        
         else {
-			//SetValueString($this->VID_AccessToken, $this->getAccessToken());
-			if ($this->connect())
+			if ($this->getAccessToken())
 				$this->SetStatus(102); // OK
 		}
 		
@@ -101,63 +86,12 @@ class NetatmoSecurity extends IPSModule
 
 	public function getAccessToken () 
 	{
-
 		$clientId = $this->ReadPropertyString('ClientId');
 		$clientSecret = $this->ReadPropertyString('ClientSecret');
 		$username = $this->ReadPropertyString('Username');
 		$password = $this->ReadPropertyString('Password');
-		$scope = 'read_camera'; // write_camera access_camera'; // all scopes are selected.
+		$scope = "read_camera write_camera access_camera";
 
-
-		$token_url = "https://api.netatmo.com/oauth2/token";
-		$postdata = http_build_query(
-			array(
-				'grant_type' => "password",
-				'client_id' => $clientId,
-				'client_secret' => $clientSecret,
-				'username' => $username,
-				'password' => $password,
-				'scope' => $scope
-			)
-		);
-
-		var_dump($postdata);
-
-		$opts = array('http' =>
-		array(
-			'method'  => 'POST',
-			'header'  => 'Content-type: application/x-www-form-urlencoded',
-			'content' => $postdata
-		)
-		);
-
-		$context  = stream_context_create($opts);
-
-		$response = file_get_contents($token_url, false, $context);
-
-		var_dump($response);
-
-		$params = null;
-		$params = json_decode($response, true);
-		
-
-		$api_url = "https://api.netatmo.com/api/getuser?access_token=".$params['access_token'];
-
-		$user = json_decode(file_get_contents($api_url));
-		SetValueString($this->VID_Usermail, $user->body->mail);
-		echo("It worked. Hello <".$user->body->mail.">\n");
-
-    }
-
-	    public function connect()
-    {
-
-
-		$clientId = $this->ReadPropertyString('ClientId');
-		$clientSecret = $this->ReadPropertyString('ClientSecret');
-		$username = $this->ReadPropertyString('Username');
-		$password = $this->ReadPropertyString('Password');
-		
         $token_url = "https://api.netatmo.com/oauth2/token";
 
         $postdata = http_build_query(
@@ -167,7 +101,7 @@ class NetatmoSecurity extends IPSModule
                                         'client_secret' => $clientSecret,
                                         'username' => $username,
                                         'password' => $password,
-                                        'scope' => 'read_station read_thermostat write_thermostat read_camera write_camera access_camera read_presence access_presence write_presence read_homecoach'
+                                        'scope' =>$scope	//</1scope>'read_station read_thermostat write_thermostat read_camera write_camera access_camera read_presence access_presence write_presence read_homecoach'
                 )
             );
         $opts = array('http' =>
@@ -184,7 +118,7 @@ class NetatmoSecurity extends IPSModule
         if ($response === false) {
             $response = @file_get_contents($token_url, false, $context);
             if ($response === false) {
-                echo "Can't connect to Netatmo Server.";
+                $this->SetStatus(207);
                 return false;
             }
         }
@@ -192,14 +126,16 @@ class NetatmoSecurity extends IPSModule
         if (isset($jsonDatas['access_token']))
         {
 			SetValueString($this->VID_AccessToken,$jsonDatas['access_token']);
-            //$this->_accesstoken = $jsonDatas['access_token'];
-            //$this->_refreshtoken = $jsonDatas['refresh_token'];
-            //$this->_scope = $jsonDatas['scope'];
+			SetValueString($this->VID_RefreshToken,$jsonDatas['refresh_token']);
+			SetValueString($this->VID_Scope,$jsonDatas['scope']);
+			SetValueString($this->VID_Expires,$jsonDatas['expires_in']);
+			SetValueString($this->VID_Expire,$jsonDatas['expire_in']);
+
             return true;
         }
         else
         {
-            echo "Can't get Netatmo token.";
+            $this->SetStatus(208);
             return false;
         }
         return true;

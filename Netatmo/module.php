@@ -67,10 +67,12 @@ IPS_LogMessage("Netatmo WebHook RAW", file_get_contents("php://input"));
         //PS_SetHidden($scriptId, true);
         if (IPS_GetKernelRunlevel() == 10103)
 		{
-		    $this->RegisterHook('/hook/Netatmo'.$this->InstanceID, $scriptId);
-	
-			$this->setWebhook();
 			$this->ValidateConfiguration();	
+			// Webhoook in ips anlegen
+		    $this->RegisterHook('/hook/Netatmo'.$this->InstanceID, $scriptId);
+			// webhook bei Netatmo anmelden
+			$this->setWebhook();
+			
 		}
 	
     }
@@ -112,7 +114,6 @@ IPS_LogMessage("Netatmo WebHook RAW", file_get_contents("php://input"));
         else {
 			if ($this->getAccessToken())
 				IPS_LogMessage($this->logSource, "Connected");
-				$this->RegisterHook()
 				$this->SetStatus(102); // OK
 		}
 		

@@ -70,7 +70,9 @@ IPS_LogMessage("Netatmo WebHook RAW", file_get_contents("php://input"));
 			$this->ValidateConfiguration();	
 			// Webhoook in ips anlegen
 		    $this->RegisterHook('/hook/Netatmo'.$this->InstanceID, $scriptId);
-			// webhook bei Netatmo anmelden
+			
+            $this->dropWebhook();
+            // webhook bei Netatmo anmelden
 			$this->setWebhook();
 			
 		}
@@ -332,7 +334,12 @@ IPS_LogMessage("Netatmo WebHook RAW", file_get_contents("php://input"));
         $api_url = $this->_apiurl.'/api/dropwebhook?access_token=' . $this->Token() .'&app_type=app_security';
         $requete = @file_get_contents($api_url);
         $jsonDatas = json_decode($requete,true);
-        return $jsonDatas;
+         if ($jsonDatas['status']== 'ok') {
+			IPS_LogMessage($this->logSource, "Unhook successfull ".$endpoint);
+			return true;			
+		}
+        IPS_LogMessage($this->logSource, "Unhook status:".$jsonDatas['status']);
+		return false;
     }
 
 

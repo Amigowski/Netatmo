@@ -19,9 +19,9 @@ class NetatmoSecurity extends IPSModule
     protected $_weatherDatas;
     protected $_apiurl = 'https://api.netatmo.net/';
 
-	private $VID_AccessToken ='';
+
 	private $VID_RefreshToken ='';
-	private $VID_Expires ='';
+
 	private $VID_Usermail ='';
 	
     public function Create()
@@ -44,11 +44,24 @@ class NetatmoSecurity extends IPSModule
 		
         parent::ApplyChanges();
 	
-		$this->VID_AccessToken = $this->RegisterVariableString("AccessToken", "AccessToken");
+		//$this->VID_AccessToken = 
+		$this->RegisterVariableString("AccessToken", "AccessToken");
 		$this->VID_Usermail = $this->RegisterVariableString("Usermail", "Mail");
 		$this->VID_RefreshToken = $this->RegisterVariableString("RefreshToken", "RefreshToken");
 		
-		$this->VID_Expires = $this->RegisterVariableString("Expires", "Expires");
+		//$this->VID_Expires = 
+		$this->RegisterVariableString("Expires", "Expires");
+		$this->RegisterVariableString("CamId","CamId");
+		$this->RegisterVariableString("Home","Home");
+		$this->RegisterVariableString("HomeId","HomeId");
+		
+		
+		//Kategorie
+		if (@IPS_GetCategoryIDByName('Persons', $this->InstanceID) ==false) {
+			$cid = IPS_CreateCategory();
+			IPS_SetName($cid, 'Persons');
+			IPS_SetParent($cid, $this->InstanceID);
+		}
 		
 		// WebHook
 		$content = '<?
@@ -59,6 +72,8 @@ IPS_LogMessage("Netatmo WebHook POST", print_r($_POST, true));
 IPS_LogMessage("Netatmo WebHook IPS", print_r($_IPS, true));
 IPS_LogMessage("Netatmo WebHook RAW", file_get_contents("php://input"));
 
+require_once "doHook.php";
+doTheHook(file_get_contents("php://input"));
 
 
 ?>';
@@ -121,28 +136,32 @@ IPS_LogMessage("Netatmo WebHook RAW", file_get_contents("php://input"));
 		
 	}
 
-	private function Token() {
-		if ($this->getAccessToken()) {
-			return GetValueString($this->VID_AccessToken);
-		}
-		return "";
-	}
+
 
 	 /************************** Schnittstelle Netatmo *******************************/
 	public function refreshToken () 
 	{
 
 	}
-
+	
+	public function get_VID_AccessToken() {
+		return IPS_GetVariableIDByName ( 'AccessToken', $this->InstanceID);
+	}
+	
+	public function get_VID_Expires() {
+		return IPS_GetVariableIDByName ( 'Expires', $this->InstanceID);
+	}
+	
+	
 	public function getAccessToken () 
 	{
-		if (GetValueString($this->VID_AccessToken)) {
+		if (GetValueString($this->get_VID_AccessToken())) {
 				// Token haben wir schon ist es auch gültig
-			$expiresIn = DateTime::createFromFormat('Y-m-d H:i:s', GetValueString($this->VID_Expires));
+			$expiresIn = DateTime::createFromFormat('Y-m-d H:i:s', GetValueString($this->get_VID_Expires()));
 			if (new DateTime() > $expiresIn) {
-				return $this->refreshToken();
+				//return $this->refreshToken();
 			}else{
-				return true;
+				return GetValueString($this->get_VID_AccessToken());
 			}
 		}
 		
@@ -185,24 +204,24 @@ IPS_LogMessage("Netatmo WebHook RAW", file_get_contents("php://input"));
         $jsonDatas = json_decode($response, true);
         if (isset($jsonDatas['access_token']))
         {
-			SetValueString($this->VID_AccessToken,$jsonDatas['access_token']);
+			SetValueString($this->get_VID_AccessToken(),$jsonDatas['access_token']);
 			SetValueString($this->VID_RefreshToken,$jsonDatas['refresh_token']);
 			$expiresIn = new DateTime('+'.$jsonDatas['expires_in'].' seconds');
 			
-			SetValueString($this->VID_Expires,$expiresIn->format('Y-m-d H:i:s'));
+			SetValueString($this->get_VID_Expires(),$expiresIn->format('Y-m-d H:i:s'));
 
 			$api_url = "https://api.netatmo.com/api/getuser?access_token=".$jsonDatas['access_token'];
 
     		$user = json_decode(file_get_contents($api_url));
     		SetValueString($this->VID_Usermail, $user->body->mail);
-            return true;
+			return GetValueString($this->get_VID_AccessToken());
         }
         else
         {
             $this->SetStatus(208);
             return false;
         }
-        return true;
+		return GetValueString($this->get_VID_AccessToken());
     }
 	
 
@@ -301,7 +320,6 @@ IPS_LogMessage("Netatmo WebHook RAW", file_get_contents("php://input"));
     //for sake of retro-compatibility:
     public function getPresenceCameras()
     {
-        $camArray = array();
         foreach ($this->_cameras as $camera) {
             if ($camera['type'] == 'Presence') $camArray[$camera['name']] = $camera;;
         }
@@ -319,7 +337,7 @@ IPS_LogMessage("Netatmo WebHook RAW", file_get_contents("php://input"));
     public function setWebhook()
     {
 		$endpoint = $this->ReadPropertyString("Url").'/hook/Netatmo'.$this->InstanceID;
-        $api_url = $this->_apiurl.'/api/addwebhook?access_token=' . $this->Token() . '&url='.$endpoint.'&app_type=app_security';
+        $api_url = $this->_apiurl.'/api/addwebhook?access_token=' . $this->getAccessToken() . '&url='.$endpoint.'&app_type=app_security';
         $requete = @file_get_contents($api_url);
         $jsonDatas = json_decode($requete,true);
         if ($jsonDatas['status']== 'ok') {
@@ -331,7 +349,7 @@ IPS_LogMessage("Netatmo WebHook RAW", file_get_contents("php://input"));
     }
     public function dropWebhook()
     {
-        $api_url = $this->_apiurl.'/api/dropwebhook?access_token=' . $this->Token() .'&app_type=app_security';
+        $api_url = $this->_apiurl.'/api/dropwebhook?access_token=' . $this->getAccessToken() .'&app_type=app_security';
         $requete = @file_get_contents($api_url);
         $jsonDatas = json_decode($requete,true);
          if ($jsonDatas['status']== 'ok') {
@@ -350,8 +368,12 @@ IPS_LogMessage("Netatmo WebHook RAW", file_get_contents("php://input"));
 	 //internal functions==================================================
     protected function getCamerasDatas($eventNum=50) //request full Presence/Welcome datas
     {
-        $api_url = $this->_apiurl.'/api/gethomedata?access_token=' . $this->_accesstoken .'&size='.$eventNum;
-        $response = file_get_contents($api_url, false);
+		$token = $this->getAccessToken();
+		
+        $api_url = $this->_apiurl.'/api/gethomedata?access_token=' . $token .'&size='.$eventNum;
+		IPS_LogMessage("Netatmo getCamerasDatas url", $api_url);
+		$response = file_get_contents($api_url, false);
+		IPS_LogMessage("Netatmo getCamerasDatas Response", $response);
         $jsonDatas = json_decode($response, true);
         $this->_camerasDatas = $jsonDatas;
         $this->_home = $jsonDatas['body']['homes'][$this->_homeID]['name'];
@@ -406,33 +428,64 @@ IPS_LogMessage("Netatmo WebHook RAW", file_get_contents("php://input"));
         }
         $this->_cameras = $allCameras;
     }
-    protected function getPersons() //Welcome
-    {
+    public function getPersons() //Welcome
+    {	
         if (is_null($this->_camerasDatas)) $this->getCamerasDatas();
         $homeDatas = $this->_camerasDatas;
-        $personsArray = array();
+      
         if ( isset($homeDatas['body']['homes'][$this->_homeID]['persons']) )
         {
             $persons = $homeDatas['body']['homes'][$this->_homeID]['persons'];
+			$cid = IPS_GetCategoryIDByName ('Persons', $this->InstanceID);
             foreach ($persons as $person)
             {
                 //echo "<pre>person:<br>".json_encode($person, JSON_PRETTY_PRINT)."</pre><br>";
-                $thisPerson = array();
-                $pseudo = 'Unknown';
-                if ( isset($person['pseudo']) ) $pseudo = $person['pseudo'];
-                $thisPerson['pseudo'] = $pseudo;
-                $thisPerson['id'] = $person['id'];
-                $lastseen = $person['last_seen'];
-                if ($lastseen == 0) $thisPerson['last_seen'] = 'Been long';
-                else $thisPerson['last_seen'] = date("d-m-Y H:i:s", $person['last_seen']);
-                $thisPerson['out_of_sight'] = $person['out_of_sight'];
-                if ( isset($person['is_arrival']) ) $thisPerson['is_arrival'] = $person['is_arrival'];
-                array_push($personsArray, $thisPerson);
+                if ( isset($person['pseudo']) ) {
+					$pid= @IPS_GetCategoryIDByName($person['pseudo'], $cid);
+					if(  $pid == false) {
+						$pid = IPS_CreateCategory();
+						IPS_Setname ($pid, $person['pseudo']);
+						IPS_SetParent($pid, $cid);
+					}
+						
+					$iid = @IPS_GetVariableIDByName('Id', $pid);
+					if ($iid == false) {
+						$iid = IPS_CreateVariable(3);
+						IPS_SetName($iid, 'Id');
+						IPS_SetParent ($iid, $pid);
+					}
+					SetValueString($iid, $person['id']);
+					
+					$lid = @IPS_GetVariableIDByName('Lastseen', $pid);
+					if ($lid == false) {
+						$lid = IPS_CreateVariable(3);
+						IPS_SetName($lid, 'Lastseen');
+						IPS_SetParent ($lid, $pid);
+					}
+					$lastseen = $person['last_seen'];
+					if ($lastseen == 0) SetValueString($lid, 'Been long');
+					else SetValueString($lid,  date("d-m-Y H:i:s", $person['last_seen']));
+					
+					$oid = @IPS_GetVariableIDByName('out_of_sight', $pid);
+					if ($oid == false) {
+						$oid = IPS_CreateVariable(0);
+						IPS_SetName($oid, 'out_of_sight');
+						IPS_SetParent ($oid, $pid);
+					}
+					SetValueBoolean($oid, $person['out_of_sight']);
+					
+					$aid = @IPS_GetVariableIDByName('is_arrival', $pid);
+					if ($aid == false) {
+						$aid = IPS_CreateVariable(3);
+						IPS_SetName($aid, 'is_arrival');
+						IPS_SetParent ($aid, $pid);
+					}
+					if ( isset($person['is_arrival']) ) 
+						SetValueString($aid, $person['out_of_sight']);
+
+				}
             }
-            $this->_persons = $personsArray;
-            return $personsArray;
         }
-        else return array('None');
     }
     protected function getPersonByName($name) //Welcome
     {

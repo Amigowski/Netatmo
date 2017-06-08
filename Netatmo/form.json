@@ -61,7 +61,7 @@
 			 {
                     "type": "Button",
                     "label": "GetPersonss",
-                    "onClick": "getPersonsAtHome();"
+                    "onClick": "Netatmo_getPersons($id);"
       }
 			],		
     "status":

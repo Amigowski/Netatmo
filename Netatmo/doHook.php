@@ -1,6 +1,5 @@
 <?
-
-public function doTheHook ($jsondata) {
+function doTheHook ($jsondata) {
     IPS_LogMessage("Netatmo DoTheHook RAW", $jsondata);
 } 
 

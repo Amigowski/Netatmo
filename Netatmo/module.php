@@ -297,7 +297,7 @@ doTheHook(file_get_contents("php://input"));
     }
     public function getPersonsAtHome() //Welcome
     {
-        $atHome = array();)
+        $atHome = array();
         foreach ($this->_persons as $thisPerson)
         {
             if ($thisPerson['out_of_sight'] == false) array_push($atHome, $thisPerson);

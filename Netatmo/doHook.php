@@ -33,7 +33,7 @@ function doTheHook ($jsonData) {
     
     if(isset($notif['home_name']))
     {
-        SetValueString(get_VID_Home(),$notif['home_name']);
+        SetValueString(get_VID_HomeName(),$notif['home_name']);
     }
 }
 

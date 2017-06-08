@@ -73,9 +73,9 @@ class NetatmoSecurity extends IPSModule
 		$content = '<?
 
 
-IPS_LogMessage("Netatmo WebHook GET", print_r($_GET, true));
-IPS_LogMessage("Netatmo WebHook POST", print_r($_POST, true));
-IPS_LogMessage("Netatmo WebHook IPS", print_r($_IPS, true));
+//IPS_LogMessage("Netatmo WebHook GET", print_r($_GET, true));
+//IPS_LogMessage("Netatmo WebHook POST", print_r($_POST, true));
+//IPS_LogMessage("Netatmo WebHook IPS", print_r($_IPS, true));
 IPS_LogMessage("Netatmo WebHook RAW", file_get_contents("php://input"));
 
 require_once "../modules/Netatmo/Netatmo/doHook.php";
@@ -328,6 +328,7 @@ doTheHook(file_get_contents("php://input"));
         $response = file_get_contents($api_url, false);
         $jsonDatas = json_decode($response, true);
         $this->getPersons();
+        return true;
     }
     public function setHomeEmpty() //Welcome
     {
@@ -391,9 +392,9 @@ doTheHook(file_get_contents("php://input"));
 		$token = $this->getAccessToken();
 		
         $api_url = $this->_apiurl.'/api/gethomedata?access_token=' . $token .'&size='.$eventNum;
-		IPS_LogMessage("Netatmo getCamerasDatas url", $api_url);
+		//IPS_LogMessage("Netatmo getCamerasDatas url", $api_url);
 		$response = file_get_contents($api_url, false);
-		IPS_LogMessage("Netatmo getCamerasDatas Response", $response);
+		//IPS_LogMessage("Netatmo getCamerasDatas Response", $response);
         $jsonDatas = json_decode($response, true);
         $this->_camerasDatas = $jsonDatas;
         $this->_home = $jsonDatas['body']['homes'][$this->_homeID]['name'];
@@ -533,10 +534,11 @@ doTheHook(file_get_contents("php://input"));
 				}
             }
             //home Empty
-            IPS_LogMessage("Netatmo CatOId", $cahid);
-            IPS_LogMessage("Netatmo Children", IPS_HasChildren($cahid));
+            //IPS_LogMessage("Netatmo CatOId", $cahid);
+            //IPS_LogMessage("Netatmo Children", IPS_HasChildren($cahid));
 
             SetValueBoolean($this->get_VID_HomeEmpty (),!IPS_HasChildren($cahid));
+            return true;
         }
     }
     protected function getPersonByName($name) //Welcome

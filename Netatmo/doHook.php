@@ -1,6 +1,6 @@
 <?
 function doTheHook ($jsonData) {
-    IPS_LogMessage("Netatmo DoTheHook RAW", $jsonData);
+    //IPS_LogMessage("Netatmo DoTheHook RAW", $jsonData);
 
     $notif = json_decode($jsonData, TRUE);
     

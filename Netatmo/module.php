@@ -528,6 +528,9 @@ doTheHook(file_get_contents("php://input"));
 				}
             }
             //home Empty
+            IPS_LogMessage("Netatmo CatOId", $cahid);
+            IPS_LogMessage("Netatmo Children", IPS_HasChildren($cahid));
+
             SetValueBoolean($this->get_VID_HomeEmpty (),IPS_HasChildren($cahid));
         }
     }

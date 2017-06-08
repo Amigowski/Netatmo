@@ -72,7 +72,7 @@ IPS_LogMessage("Netatmo WebHook POST", print_r($_POST, true));
 IPS_LogMessage("Netatmo WebHook IPS", print_r($_IPS, true));
 IPS_LogMessage("Netatmo WebHook RAW", file_get_contents("php://input"));
 
-require_once "doHook.php";
+require_once "../modules/Netatmo/doHook.php";
 doTheHook(file_get_contents("php://input"));
 
 

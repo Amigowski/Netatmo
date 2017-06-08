@@ -306,23 +306,23 @@ doTheHook(file_get_contents("php://input"));
     }
     public function getPerson($name) //Welcome
     {
-        if ( is_string($name) ) return get_CID_Person($name);
+        if ( is_string($name) ) return $this->get_CID_Person($name);
     }
     public function getPersonsAtHome() //Welcome
     {
-         return get_CID('Persons at Home');
+         return $this->get_CID('Persons at Home');
     }
     public function isHomeEmpty() //Welcome
     {
        $this->getPersons();
-       return GetValueBoolean(get_VID_By_Name('HomeEmpty', $this->InstanceId));
+       return GetValueBoolean($this->get_VID_By_Name('HomeEmpty', $this->InstanceId));
     }
     public function setPersonAway($name) //Welcome
     {
-        if ( is_string($name) ) $pid = get_CID_Person($name);
+        if ( is_string($name) ) $pid = $this->get_CID_Person($name);
         
-        $personID = GetValueString(get_VID_By_Name('Id', $pid));
-        $homeID =  GetValueString(get_VID_By_Name('HomeId',$this->InstanceID));
+        $personID = GetValueString($this->get_VID_By_Name('Id', $pid));
+        $homeID =  GetValueString($this->get_VID_By_Name('HomeId',$this->InstanceID));
         
         $api_url = $this->_apiurl.'/api/setpersonsaway?access_token=' . $this->getAccessToken() .'&home_id='.$homeID.'&person_id='.$personID .'&size=2';
         $response = file_get_contents($api_url, false);
@@ -331,7 +331,7 @@ doTheHook(file_get_contents("php://input"));
     }
     public function setHomeEmpty() //Welcome
     {
-        $homeID =  GetValueString(get_VID_By_Name('HomeId',$this->InstanceID));
+        $homeID =  GetValueString($this->get_VID_By_Name('HomeId',$this->InstanceID));
         $api_url = $this->_apiurl.'/api/setpersonsaway?access_token=' . $this->getAccessToken() .'&home_id='.$homeID.'&size=2';
         $response = file_get_contents($api_url, false);
         $jsonDatas = json_decode($response, true);

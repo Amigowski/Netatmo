@@ -15,7 +15,7 @@ function doTheHook ($jsonData) {
     
     if(isset($notif['event_type']))
     {
-        $eventype = $notif['event_type'];
+        $eventtype = $notif['event_type'];
         if ($eventtype == 'person') {
             Netatmo_getPersons(getParent());
         }

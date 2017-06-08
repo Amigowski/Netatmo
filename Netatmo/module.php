@@ -528,7 +528,7 @@ doTheHook(file_get_contents("php://input"));
 				}
             }
             //home Empty
-            SetValueBoolean(get_VID_HomeEmpty(),IPS_HasChildren($cahid));
+            SetValueBoolean($this->get_VID_HomeEmpty (),IPS_HasChildren($cahid));
         }
     }
     protected function getPersonByName($name) //Welcome

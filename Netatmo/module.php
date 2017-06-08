@@ -19,10 +19,6 @@ class NetatmoSecurity extends IPSModule
     protected $_weatherDatas;
     protected $_apiurl = 'https://api.netatmo.net/';
 
-
-	private $VID_RefreshToken ='';
-
-	private $VID_Usermail ='';
 	
     public function Create()
     {
@@ -46,8 +42,7 @@ class NetatmoSecurity extends IPSModule
 	
 		//$this->VID_AccessToken = 
 		$this->RegisterVariableString("AccessToken", "AccessToken");
-		$this->VID_Usermail = $this->RegisterVariableString("Usermail", "Mail");
-		$this->VID_RefreshToken = $this->RegisterVariableString("RefreshToken", "RefreshToken");
+		$this->RegisterVariableString("RefreshToken", "RefreshToken");
 		
 		//$this->VID_Expires = 
 		$this->RegisterVariableString("Expires", "Expires");
@@ -56,10 +51,20 @@ class NetatmoSecurity extends IPSModule
 		$this->RegisterVariableString("HomeId","HomeId");
 		
 		
-		//Kategorie
+		//Kategorien
 		if (@IPS_GetCategoryIDByName('Persons', $this->InstanceID) ==false) {
 			$cid = IPS_CreateCategory();
 			IPS_SetName($cid, 'Persons');
+			IPS_SetParent($cid, $this->InstanceID);
+		}
+        if (@IPS_GetCategoryIDByName('Persons at Home', $this->InstanceID) ==false) {
+			$cid = IPS_CreateCategory();
+			IPS_SetName($cid, 'Persons at Home');
+			IPS_SetParent($cid, $this->InstanceID);
+		}
+        if (@IPS_GetCategoryIDByName('Persons away', $this->InstanceID) ==false) {
+			$cid = IPS_CreateCategory();
+			IPS_SetName($cid, 'Persons away');
 			IPS_SetParent($cid, $this->InstanceID);
 		}
 		
@@ -139,21 +144,30 @@ doTheHook(file_get_contents("php://input"));
 
 
 	 /************************** Schnittstelle Netatmo *******************************/
-	public function refreshToken () 
+	private function refreshToken () 
 	{
 
 	}
 	
-	public function get_VID_AccessToken() {
+	private function get_VID_AccessToken() {
 		return IPS_GetVariableIDByName ( 'AccessToken', $this->InstanceID);
 	}
+
+    private function get_VID_RefreshToken() {
+        return IPS_GetVariableIDByName ( 'RefreshToken', $this->InstanceID);
+    }
 	
-	public function get_VID_Expires() {
+	private function get_VID_Expires() {
 		return IPS_GetVariableIDByName ( 'Expires', $this->InstanceID);
 	}
 	
+	private function get_CID_Person($name) {
+        $cid = IPS_GetCategoryIDByName ('Persons', $this->InstanceID);
+        $pid= @IPS_GetCategoryIDByName($name, $cid);
+		return $pid;
+	}
 	
-	public function getAccessToken () 
+	private function getAccessToken () 
 	{
 		if (GetValueString($this->get_VID_AccessToken())) {
 				// Token haben wir schon ist es auch gültig
@@ -205,15 +219,14 @@ doTheHook(file_get_contents("php://input"));
         if (isset($jsonDatas['access_token']))
         {
 			SetValueString($this->get_VID_AccessToken(),$jsonDatas['access_token']);
-			SetValueString($this->VID_RefreshToken,$jsonDatas['refresh_token']);
+			SetValueString($this->get_VID_RefreshToken(),$jsonDatas['refresh_token']);
 			$expiresIn = new DateTime('+'.$jsonDatas['expires_in'].' seconds');
 			
 			SetValueString($this->get_VID_Expires(),$expiresIn->format('Y-m-d H:i:s'));
 
 			$api_url = "https://api.netatmo.com/api/getuser?access_token=".$jsonDatas['access_token'];
-
     		$user = json_decode(file_get_contents($api_url));
-    		SetValueString($this->VID_Usermail, $user->body->mail);
+    		
 			return GetValueString($this->get_VID_AccessToken());
         }
         else
@@ -225,8 +238,8 @@ doTheHook(file_get_contents("php://input"));
     }
 	
 
-
-	 public function getIndoorEvents($num=5)
+    //TODO
+	private function getIndoorEvents($num=5)
     {
         if (is_null($this->_camerasDatas)) $this->getCamerasDatas(10);
         if (is_null($this->_cameras)) $this->getCameras();
@@ -280,12 +293,11 @@ doTheHook(file_get_contents("php://input"));
     }
     public function getPerson($name) //Welcome
     {
-        if ( is_string($name) ) $person = $this->getPersonByName($name);
-        return $person;
+        if ( is_string($name) ) return get_CID_Person($name);
     }
     public function getPersonsAtHome() //Welcome
     {
-        $atHome = array();
+        $atHome = array();)
         foreach ($this->_persons as $thisPerson)
         {
             if ($thisPerson['out_of_sight'] == false) array_push($atHome, $thisPerson);
@@ -437,6 +449,8 @@ doTheHook(file_get_contents("php://input"));
         {
             $persons = $homeDatas['body']['homes'][$this->_homeID]['persons'];
 			$cid = IPS_GetCategoryIDByName ('Persons', $this->InstanceID);
+            $cahid = IPS_GetCategoryIDByName ('Persons at Home', $this->InstanceID);
+            $cawid = IPS_GetCategoryIDByName ('Persons away', $this->InstanceID);
             foreach ($persons as $person)
             {
                 //echo "<pre>person:<br>".json_encode($person, JSON_PRETTY_PRINT)."</pre><br>";
@@ -481,7 +495,32 @@ doTheHook(file_get_contents("php://input"));
 						IPS_SetParent ($aid, $pid);
 					}
 					if ( isset($person['is_arrival']) ) 
-						SetValueString($aid, $person['out_of_sight']);
+						SetValueString($aid, $person['is_arrival']);
+
+                    //De/Verlinken
+                    if ($person['out_of_sight']) {
+                        //away
+                        if (@IPS_GetLinkIDByName($person['pseudo'],$cahid)) {
+                            IPS_DeleteLink(@IPS_GetLinkIDByName($person['pseudo'],$cahid));
+                        }
+                        if (@IPS_GetLinkIDByName($person['pseudo'],$cawid) == false) {
+                            $linkid = IPS_CreateLink();
+                            IPS_SetLinkTargetID ($linkid, $pid);
+                            IPS_SetName($linkid, $person['pseudo']);
+                            IPS_SetParent($linkid, $cawid);
+                        }
+                    }else{
+                              //at home
+                        if (@IPS_GetLinkIDByName($person['pseudo'],$cawid)) {
+                            IPS_DeleteLink(@IPS_GetLinkIDByName($person['pseudo'],$cawid));
+                        }
+                        if (@IPS_GetLinkIDByName($person['pseudo'],$cahid) == false) {
+                            $linkid = IPS_CreateLink();
+                            IPS_SetLinkTargetID ($linkid, $pid);
+                            IPS_SetName($linkid, $person['pseudo']);
+                            IPS_SetParent($linkid, $cahid);
+                        }
+                    }
 
 				}
             }

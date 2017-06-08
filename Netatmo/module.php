@@ -49,6 +49,7 @@ class NetatmoSecurity extends IPSModule
 		$this->RegisterVariableString("CamId","CamId");
 		$this->RegisterVariableString("Home","Home");
 		$this->RegisterVariableString("HomeId","HomeId");
+        $this->RegisterVariableBoolean("HomeEmpty","HomeEmpty");
 		
 		
 		//Kategorien
@@ -160,13 +161,20 @@ doTheHook(file_get_contents("php://input"));
 	private function get_VID_Expires() {
 		return IPS_GetVariableIDByName ( 'Expires', $this->InstanceID);
 	}
+	private function get_VID_HomeEmpty() {
+		return IPS_GetVariableIDByName ( 'HomeEmpty', $this->InstanceID);
+	}
 	
 	private function get_CID_Person($name) {
         $cid = IPS_GetCategoryIDByName ('Persons', $this->InstanceID);
         $pid= @IPS_GetCategoryIDByName($name, $cid);
 		return $pid;
 	}
-	
+	private function get_CID($name) {
+        $cid = IPS_GetCategoryIDByName ($name, $this->InstanceID);
+        
+		return $cid;
+	}
 	private function getAccessToken () 
 	{
 		if (GetValueString($this->get_VID_AccessToken())) {
@@ -297,12 +305,7 @@ doTheHook(file_get_contents("php://input"));
     }
     public function getPersonsAtHome() //Welcome
     {
-        $atHome = array();
-        foreach ($this->_persons as $thisPerson)
-        {
-            if ($thisPerson['out_of_sight'] == false) array_push($atHome, $thisPerson);
-        }
-        return array('result'=>$atHome);
+         return get_CID('Persons at Home');
     }
     public function isHomeEmpty() //Welcome
     {
@@ -524,6 +527,8 @@ doTheHook(file_get_contents("php://input"));
 
 				}
             }
+            //home Empty
+            SetValueBoolean(get_VID_HomeEmpty(),IPS_HasChildren($cahid));
         }
     }
     protected function getPersonByName($name) //Welcome

@@ -164,7 +164,12 @@ doTheHook(file_get_contents("php://input"));
 	private function get_VID_HomeEmpty() {
 		return IPS_GetVariableIDByName ( 'HomeEmpty', $this->InstanceID);
 	}
-	
+	private function get_VID_HomeId() {
+		return IPS_GetVariableIDByName ( 'HomeId', $this->InstanceID);
+	}
+	private function get_VID_By_Name($name, $id) {
+		return IPS_GetVariableIDByName ( $name, $id);
+	}
 	private function get_CID_Person($name) {
         $cid = IPS_GetCategoryIDByName ('Persons', $this->InstanceID);
         $pid= @IPS_GetCategoryIDByName($name, $cid);
@@ -309,38 +314,38 @@ doTheHook(file_get_contents("php://input"));
     }
     public function isHomeEmpty() //Welcome
     {
-        $atHome = $this->getPersonsAtHome();
-        if (count($atHome)==0) return true;
-        return false;
+       $this->getPersons();
+       return GetValueBoolean(get_VID_By_Name('HomeEmpty', $this->InstanceId));
     }
-    public function setPersonAway($person) //Welcome
+    public function setPersonAway($name) //Welcome
     {
-        if ( is_string($person) ) $person = $this->getPersonByName($person);
-        if ( isset($person['error']) ) return $person;
-        $personID = $person['id'];
-        $homeID = $this->_camerasDatas['body']['homes'][$this->_homeID]['id'];
-        $api_url = $this->_apiurl.'/api/setpersonsaway?access_token=' . $this->_accesstoken .'&home_id='.$homeID.'&person_id='.$personID .'&size=2';
+        if ( is_string($name) ) $pid = get_CID_Person($name);
+        
+        $personID = GetValueString(get_VID_By_Name('Id', $pid));
+        $homeID =  GetValueString(get_VID_By_Name('HomeId',$this->InstanceID));
+        
+        $api_url = $this->_apiurl.'/api/setpersonsaway?access_token=' . $this->getAccessToken() .'&home_id='.$homeID.'&person_id='.$personID .'&size=2';
         $response = file_get_contents($api_url, false);
         $jsonDatas = json_decode($response, true);
-        return $jsonDatas;
+        $this->getPersons();
     }
     public function setHomeEmpty() //Welcome
     {
-        $homeID = $this->_camerasDatas['body']['homes'][$this->_homeID]['id'];
-        $api_url = $this->_apiurl.'/api/setpersonsaway?access_token=' . $this->_accesstoken .'&home_id='.$homeID.'&size=2';
+        $homeID =  GetValueString(get_VID_By_Name('HomeId',$this->InstanceID));
+        $api_url = $this->_apiurl.'/api/setpersonsaway?access_token=' . $this->getAccessToken() .'&home_id='.$homeID.'&size=2';
         $response = file_get_contents($api_url, false);
         $jsonDatas = json_decode($response, true);
-        return $jsonDatas;
+        $this->getPersons();
     }
     //for sake of retro-compatibility:
-    public function getPresenceCameras()
+    private function getPresenceCameras()
     {
         foreach ($this->_cameras as $camera) {
             if ($camera['type'] == 'Presence') $camArray[$camera['name']] = $camera;;
         }
         return $camArray;
     }
-    public function getWelcomeCameras()
+    private function getWelcomeCameras()
     {
         $camArray = array();
         foreach ($this->_cameras as $camera) {

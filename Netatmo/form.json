@@ -60,8 +60,13 @@
 			[
 			 {
                     "type": "Button",
-                    "label": "GetPersonss",
+                    "label": "Get Persons",
                     "onClick": "Netatmo_getPersons($id);"
+      },
+      {
+                    "type":"Button",
+                    "label":"Set Home Empty",
+                    "onClick":"Netatmo_setHomeEmpty($id);"
       }
 			],		
     "status":

@@ -328,7 +328,7 @@ doTheHook(file_get_contents("php://input"));
         $response = file_get_contents($api_url, false);
         $jsonDatas = json_decode($response, true);
         $this->getPersons();
-        return true;
+        
     }
     public function setHomeEmpty() //Welcome
     {
